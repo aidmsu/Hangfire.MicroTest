@@ -9,5 +9,10 @@ namespace Hangfire.MicroTest.NewsletterService
         {
             Console.WriteLine($"Processing newsletter '{campaignId}'");
         }
+
+        public void ExecuteInstance(long campaignId)
+        {
+            Console.WriteLine($"Processing newsletter '{campaignId}'");
+        }
     }
 }

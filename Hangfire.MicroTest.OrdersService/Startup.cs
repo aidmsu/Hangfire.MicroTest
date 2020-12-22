@@ -22,6 +22,7 @@ namespace Hangfire.MicroTest.OrdersService
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient client)
         {
             client.Enqueue(() => NewsletterSender.Execute(67890));
+            client.Enqueue<NewsletterSender>(x => x.ExecuteInstance(67890));
 
             if (env.IsDevelopment())
             {
