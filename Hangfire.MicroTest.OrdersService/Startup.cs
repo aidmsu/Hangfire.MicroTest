@@ -22,7 +22,7 @@ namespace Hangfire.MicroTest.OrdersService
                 
             });
             
-            services.AddSingleton<IBackgroundJobClient>(provider => new CustomBackgroundJobClient(new BackgroundJobClient()));
+            services.AddSingleton<IBackgroundJobClient>(provider => new MicroserviceBackgroundJobClient(new BackgroundJobClient()));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient client)

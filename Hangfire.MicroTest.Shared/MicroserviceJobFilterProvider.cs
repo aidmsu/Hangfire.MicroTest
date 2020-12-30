@@ -3,25 +3,25 @@ using Hangfire.Common;
 
 namespace Hangfire.MicroTest.Shared
 {
-    internal class CustomJobFilterProvider : IJobFilterProvider
+    internal class MicroserviceJobFilterProvider : IJobFilterProvider
     {
         public IEnumerable<JobFilter> GetFilters(Job job)
         {
             foreach (var arg in job.Args)
             {
-                if (arg is CustomJob customJob)
+                if (arg is MicroserviceJob microserviceJob)
                 {
-                    if (customJob.MethodFilters != null)
+                    if (microserviceJob.MethodFilters != null)
                     {
-                        foreach (var filter in customJob.MethodFilters)
+                        foreach (var filter in microserviceJob.MethodFilters)
                         {
                             yield return new JobFilter(filter, JobFilterScope.Method, null);
                         }
                     }
 
-                    if (customJob.TypeFilters != null)
+                    if (microserviceJob.TypeFilters != null)
                     {
-                        foreach (var filter in customJob.TypeFilters)
+                        foreach (var filter in microserviceJob.TypeFilters)
                         {
                             yield return new JobFilter(filter, JobFilterScope.Type, null);
                         }

@@ -14,9 +14,9 @@ namespace Hangfire.MicroTest.Shared
     public static class IServiceCollectionExtensions
     {
         private static readonly Lazy<IBackgroundJobClient> CachedBackgroundJobClient
-            = new Lazy<IBackgroundJobClient>(() => new CustomBackgroundJobClient(new BackgroundJobClient()), LazyThreadSafetyMode.PublicationOnly);
+            = new Lazy<IBackgroundJobClient>(() => new MicroserviceBackgroundJobClient(new BackgroundJobClient()), LazyThreadSafetyMode.PublicationOnly);
 
-        private static readonly Func<IBackgroundJobClient> CustomBackgroundJobClientFactory = () => CachedBackgroundJobClient.Value;
+        private static readonly Func<IBackgroundJobClient> MicroserviceBackgroundJobClientFactory = () => CachedBackgroundJobClient.Value;
 
         public static IServiceCollection AddMicroserviceHangfireServer(this IServiceCollection services)
         {
@@ -33,11 +33,11 @@ namespace Hangfire.MicroTest.Shared
 
             if (services.Any(x => x.ServiceType == typeof(IBackgroundJobPerformer)))
             {
-                services.Decorate<IBackgroundJobPerformer, CustomBackgroundJobPerformer>();
+                services.Decorate<IBackgroundJobPerformer, MicroserviceBackgroundJobPerformer>();
             }
             else
             {
-                services.AddSingleton<IBackgroundJobPerformer>(x => new CustomBackgroundJobPerformer(new BackgroundJobPerformer(filterProvider, activator, options.TaskScheduler)));
+                services.AddSingleton<IBackgroundJobPerformer>(x => new MicroserviceBackgroundJobPerformer(new BackgroundJobPerformer(filterProvider, activator, options.TaskScheduler)));
             }
            
             services.TryAddSingleton<IBackgroundJobFactory>(x => new BackgroundJobFactory(filterProvider));
@@ -50,7 +50,7 @@ namespace Hangfire.MicroTest.Shared
             {
                 throw new InvalidOperationException($"Non-public static property 'ClientFactory' is not found in {nameof(BackgroundJob)} type.");
             }
-            clientFactoryProperty.SetValue(null, CustomBackgroundJobClientFactory);
+            clientFactoryProperty.SetValue(null, MicroserviceBackgroundJobClientFactory);
 
             services.AddHangfireServer(config);
 

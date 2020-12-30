@@ -9,7 +9,7 @@ namespace Hangfire.MicroTest.Shared
         {
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
-            JobFilterProviders.Providers.Add(new CustomJobFilterProvider());
+            JobFilterProviders.Providers.Add(new MicroserviceJobFilterProvider());
 
             return configuration
                 .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)

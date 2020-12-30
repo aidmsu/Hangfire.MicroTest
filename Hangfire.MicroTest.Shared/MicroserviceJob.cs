@@ -9,9 +9,9 @@ using Newtonsoft.Json;
 
 namespace Hangfire.MicroTest.Shared
 {
-    internal class CustomJob
+    internal class MicroserviceJob
     {
-        public CustomJob(
+        public MicroserviceJob(
             [NotNull] string type,
             [NotNull] string method,
             [CanBeNull] string parameterTypes,
@@ -46,15 +46,15 @@ namespace Hangfire.MicroTest.Shared
         public JobFilterAttribute[] MethodFilters { get; }
 
         [DisplayName("{0}")]
-        public static void Execute(string displayName, CustomJob customJob, PerformContext performContext)
+        public static void Execute(string displayName, MicroserviceJob microserviceJob, PerformContext performContext)
         {
-            if (customJob == null) throw new ArgumentNullException(nameof(customJob));
+            if (microserviceJob == null) throw new ArgumentNullException(nameof(microserviceJob));
 
             var invocationData = new InvocationData(
-                customJob.Type,
-                customJob.Method,
-                customJob.ParameterTypes ?? String.Empty,
-                customJob.Args);
+                microserviceJob.Type,
+                microserviceJob.Method,
+                microserviceJob.ParameterTypes ?? String.Empty,
+                microserviceJob.Args);
 
             var job = invocationData.DeserializeJob();
 

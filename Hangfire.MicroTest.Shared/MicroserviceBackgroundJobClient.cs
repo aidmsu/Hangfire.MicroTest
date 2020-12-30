@@ -22,12 +22,12 @@ namespace Hangfire.MicroTest.Shared
         }
     }
     
-    public class CustomBackgroundJobClient : IBackgroundJobClient
+    public class MicroserviceBackgroundJobClient : IBackgroundJobClient
     {
         private readonly IBackgroundJobClient _inner;
         private readonly JobFilterAttributeProvider _attributeProvider;
 
-        public CustomBackgroundJobClient(IBackgroundJobClient inner)
+        public MicroserviceBackgroundJobClient(IBackgroundJobClient inner)
         {
             _inner = inner ?? throw new ArgumentNullException(nameof(inner));
             _attributeProvider = new JobFilterAttributeProvider();
@@ -41,7 +41,7 @@ namespace Hangfire.MicroTest.Shared
             var invocationData = InvocationData.SerializeJob(job);
             var displayName = $"{job.Type.Name}.{job.Method.Name}";
 
-            var proxyJob = Job.FromExpression(() => CustomJob.Execute(displayName, new CustomJob(
+            var proxyJob = Job.FromExpression(() => MicroserviceJob.Execute(displayName, new MicroserviceJob(
                     invocationData.Type,
                     invocationData.Method,
                     invocationData.ParameterTypes != String.Empty ? invocationData.ParameterTypes : null,
