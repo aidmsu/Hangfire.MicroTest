@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Hangfire.MicroTest.Shared
 {
-    public class CustomJob
+    internal class CustomJob
     {
         public CustomJob(
             [NotNull] string type,

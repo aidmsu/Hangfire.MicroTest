@@ -16,6 +16,7 @@ namespace Hangfire.MicroTest.Shared
                 .UseRecommendedSerializerSettings()
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseIgnoredAssemblyVersionTypeResolver()
+                .UseResultsInContinuations()
                 .UseRedisStorage();
         }
     }

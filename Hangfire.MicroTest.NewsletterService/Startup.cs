@@ -1,4 +1,3 @@
-using Hangfire.Common;
 using Hangfire.MicroTest.Shared;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,9 +12,11 @@ namespace Hangfire.MicroTest.NewsletterService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHangfire(config => config.UseApplicationConfiguration());
-            services.AddHangfireServer(config => config.Queues = new [] { "newsletter", "default" });
-            
-            services.AddSingleton<IBackgroundJobClient>(provider => new CustomBackgroundJobClient(new BackgroundJobClient()));
+
+            services.AddMicroserviceHangfireServer(config =>
+            {
+                config.Queues = new[] {"newsletter", "default"};
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

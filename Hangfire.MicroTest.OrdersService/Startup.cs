@@ -1,6 +1,7 @@
 using Hangfire.Common;
 using Hangfire.MicroTest.NewsletterService;
 using Hangfire.MicroTest.Shared;
+using Hangfire.Server;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,15 +15,21 @@ namespace Hangfire.MicroTest.OrdersService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHangfire(config => config.UseApplicationConfiguration());
-            services.AddHangfireServer(config => config.Queues = new [] { "orders", "default" });
+
+            services.AddMicroserviceHangfireServer(config =>
+            {
+                config.Queues = new[] {"orders", "default"};
+                
+            });
             
             services.AddSingleton<IBackgroundJobClient>(provider => new CustomBackgroundJobClient(new BackgroundJobClient()));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IBackgroundJobClient client)
         {
-            client.Enqueue(() => NewsletterSender.Execute(67890));
-            client.Enqueue<NewsletterSender>(x => x.ExecuteInstance(67890));
+            var jobId = client.Enqueue(() => NewsletterSender.ExecuteGeneric(67890));
+            BackgroundJob.ContinueJobWith(jobId, () => NewsletterSender.Execute(67891, null));
+            BackgroundJob.Enqueue<NewsletterSender>(x => x.ExecuteInstance(67892));
 
             if (env.IsDevelopment())
             {
