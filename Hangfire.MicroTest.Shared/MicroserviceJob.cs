@@ -1,9 +1,7 @@
 using System;
 using System.ComponentModel;
-using System.Linq;
 using Hangfire.Annotations;
 using Hangfire.Common;
-using Hangfire.Server;
 using Hangfire.Storage;
 using Newtonsoft.Json;
 
@@ -46,30 +44,35 @@ namespace Hangfire.MicroTest.Shared
         public JobFilterAttribute[] MethodFilters { get; }
 
         [DisplayName("{0}")]
-        public static void Execute(string displayName, MicroserviceJob microserviceJob, PerformContext performContext)
+        public static void Execute(string displayName, MicroserviceJob microserviceJob)
         {
-            if (microserviceJob == null) throw new ArgumentNullException(nameof(microserviceJob));
+            throw new InvalidOperationException("This method should not be invoked.");
+        }
 
-            var invocationData = new InvocationData(
-                microserviceJob.Type,
-                microserviceJob.Method,
-                microserviceJob.ParameterTypes ?? String.Empty,
-                microserviceJob.Args);
-
-            var job = invocationData.DeserializeJob();
-
-            if (!job.Method.IsStatic)
+        internal bool TryGetOriginalJob(out Job job)
+        {
+            job = null;
+            try
             {
-                using (var scope = JobActivator.Current.BeginScope(performContext))
-                {
-                    var obj = scope.Resolve(job.Type);
-                    job.Method.Invoke(obj, job.Args.ToArray());
-                }
-
-                return;
+                job = GetOriginalJob();
+            }
+            catch
+            {
+                return false;
             }
 
-            job.Method.Invoke(null, job.Args.ToArray());
+            return true;
+        }
+
+        private Job GetOriginalJob()
+        {
+            var invocationData = new InvocationData(
+                Type,
+                Method,
+                ParameterTypes ?? String.Empty,
+                Args);
+
+            return invocationData.DeserializeJob();
         }
     }
 }

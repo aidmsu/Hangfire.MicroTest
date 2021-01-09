@@ -17,7 +17,18 @@ namespace Hangfire.MicroTest.Shared
                 .UseSimpleAssemblyNameTypeSerializer()
                 .UseIgnoredAssemblyVersionTypeResolver()
                 .UseResultsInContinuations()
-                .UseRedisStorage();
+                .UseRedisStorage()
+                .UseMicroservices();
+        }
+
+        public static IGlobalConfiguration UseMicroservices(this IGlobalConfiguration configuration)
+        {
+            if (configuration == null) throw new ArgumentNullException(nameof(configuration));
+
+            JobFilterProviders.Providers.Add(new MicroserviceJobFilterProvider());
+
+            return configuration
+                .UseStorage(new MicroserviceStorageDecorator(JobStorage.Current));
         }
     }
 }

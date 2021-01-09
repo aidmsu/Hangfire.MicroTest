@@ -47,8 +47,7 @@ namespace Hangfire.MicroTest.Shared
                     invocationData.ParameterTypes != String.Empty ? invocationData.ParameterTypes : null,
                     invocationData.Arguments,
                     typeFilters.Length > 0 ? typeFilters : null,
-                    methodFilters.Length > 0 ? methodFilters : null),
-                null));
+                    methodFilters.Length > 0 ? methodFilters : null)));
 
             return _inner.Create(proxyJob, state);
         }

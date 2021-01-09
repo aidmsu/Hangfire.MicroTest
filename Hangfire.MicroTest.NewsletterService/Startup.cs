@@ -13,7 +13,9 @@ namespace Hangfire.MicroTest.NewsletterService
         {
             services.AddHangfire(config => config.UseApplicationConfiguration());
 
-            services.AddMicroserviceHangfireServer(config =>
+            services.AddMicroservices();
+
+            services.AddHangfireServer(config =>
             {
                 config.Queues = new[] {"newsletter", "default"};
             });

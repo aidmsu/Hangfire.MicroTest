@@ -7,6 +7,8 @@ namespace Hangfire.MicroTest.Shared
     {
         public IEnumerable<JobFilter> GetFilters(Job job)
         {
+            if (job?.Type != typeof(MicroserviceJob)) yield break;
+            
             foreach (var arg in job.Args)
             {
                 if (arg is MicroserviceJob microserviceJob)

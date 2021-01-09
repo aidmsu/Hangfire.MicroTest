@@ -16,7 +16,9 @@ namespace Hangfire.MicroTest.OrdersService
         {
             services.AddHangfire(config => config.UseApplicationConfiguration());
 
-            services.AddMicroserviceHangfireServer(config =>
+            services.AddMicroservices();
+
+            services.AddHangfireServer(config =>
             {
                 config.Queues = new[] {"orders", "default"};
                 
