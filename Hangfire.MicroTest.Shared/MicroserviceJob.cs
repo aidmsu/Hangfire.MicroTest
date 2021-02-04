@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel;
 using Hangfire.Annotations;
 using Hangfire.Common;
+using Hangfire.Server;
 using Hangfire.Storage;
 using Newtonsoft.Json;
 
@@ -44,24 +45,17 @@ namespace Hangfire.MicroTest.Shared
         public JobFilterAttribute[] MethodFilters { get; }
 
         [DisplayName("{0}")]
-        public static void Execute(string displayName, MicroserviceJob microserviceJob)
+        public static void Execute(string displayName, MicroserviceJob microserviceJob, PerformContext performContext)
         {
-            throw new InvalidOperationException("This method should not be invoked.");
-        }
+            var originalJob = microserviceJob.GetOriginalJob();
+            performContext.BackgroundJob = new BackgroundJob(performContext.BackgroundJob.Id, originalJob, performContext.BackgroundJob.CreatedAt);
 
-        internal bool TryGetOriginalJob(out Job job)
-        {
-            job = null;
-            try
+            if (performContext.Performer == null)
             {
-                job = GetOriginalJob();
-            }
-            catch
-            {
-                return false;
+                throw new InvalidOperationException("The Performer property is not set for performContext.");
             }
 
-            return true;
+            performContext.Performer.Perform(performContext);
         }
 
         private Job GetOriginalJob()

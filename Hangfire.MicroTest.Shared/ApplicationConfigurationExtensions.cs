@@ -27,8 +27,7 @@ namespace Hangfire.MicroTest.Shared
 
             JobFilterProviders.Providers.Add(new MicroserviceJobFilterProvider());
 
-            return configuration
-                .UseStorage(new MicroserviceStorageDecorator(JobStorage.Current));
+            return configuration;
         }
     }
 }
